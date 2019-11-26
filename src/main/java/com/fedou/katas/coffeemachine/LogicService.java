@@ -12,6 +12,12 @@ public class LogicService {
             case TEA:
                 maker.make("T::");
                 break;
+            case CHOCOLATE:
+                maker.make("H::");
+                break;
+            case COFFEE:
+                maker.make("C::");
+                break;
         }
     }
 }
