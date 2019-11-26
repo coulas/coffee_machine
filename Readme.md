@@ -15,7 +15,7 @@ Do the simplest thing that could work for the current iteration
 ## Project
 In this coffee Machine Project, your task is to implement the logic (starting from a simple class) that translates orders from customers of the coffee machine to the drink maker. Your code will use the drink maker protocol to send commands to the drink maker.
 
-![coffee machine internal component schema]("src/spec/resources/coffee-800x700.png")
+![coffee machine internal component schema](./src/spec/resources/coffee-800x700.png)
 
 ### Important !
 **You do not have to implement the coffee machine customer interface.** For instance, your code could consume a simple POJO that would represent an order from a customer.
