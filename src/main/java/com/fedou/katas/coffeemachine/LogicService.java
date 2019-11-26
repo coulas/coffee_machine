@@ -8,16 +8,19 @@ public class LogicService {
     }
 
     public void receives(Command command) {
+        StringBuilder message = new StringBuilder();
         switch (command.drink) {
             case TEA:
-                maker.make("T::");
+                message.append("T");
                 break;
             case CHOCOLATE:
-                maker.make("H::");
+                message.append("H");
                 break;
             case COFFEE:
-                maker.make("C::");
+                message.append("C");
                 break;
         }
+        message.append("::");
+        maker.make(message.toString());
     }
 }
