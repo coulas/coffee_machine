@@ -21,14 +21,6 @@ class LogicServiceTest {
     @InjectMocks
     LogicService logic;
 
-    /**
-     * The drink maker should receive the correct instructions for my coffee / tea / chocolate order
-     * without sugar
-     * T:: => Tea
-     * H:: => Hot Chocolate
-     * C:: => Coffee
-     */
-
     @TestFactory
     DynamicTest[] should_make_rigth_drink() {
         return new DynamicTest[]{
@@ -41,22 +33,15 @@ class LogicServiceTest {
         };
     }
 
-    /**
-     * I want to be able to send instructions to the drink maker to add one or two sugars
-     * When my order contains sugar the drink maker should add a stick (touillette) with it
-     * with sugar : whatever is X followed by one or two sugar followed by a zero meaning you have a stick.
-     * X:1:0
-     * X:2:0
-     */
     @TestFactory
     DynamicTest[] should_make_drink_with_sugar() {
         return new DynamicTest[]{
                 DynamicTest.dynamicTest("No Sugar with Tea is T::", () -> executeTestsForCase(
                         Command.DrinkType.TEA, 0, "T::")),
                 DynamicTest.dynamicTest("One Sugar with Tea is T:1:0", () -> executeTestsForCase(
-                        Command.DrinkType.TEA, 0, "T::")),
+                        Command.DrinkType.TEA, 1, "T:1:0")),
                 DynamicTest.dynamicTest("Two Sugar with Tea is T:2:0", () -> executeTestsForCase(
-                        Command.DrinkType.TEA, 0, "T::")),
+                        Command.DrinkType.TEA, 2, "T:2:0")),
         };
     }
 
