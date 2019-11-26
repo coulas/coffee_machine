@@ -1,7 +1,17 @@
 package com.fedou.katas.coffeemachine;
 
 public class LogicService {
+    private DrinkMakerService maker;
+
+    public LogicService(DrinkMakerService maker) {
+        this.maker = maker;
+    }
+
     public void receives(Command command) {
-        // tell your truth :-)
+        switch (command.drink) {
+            case TEA:
+                maker.make("T::");
+                break;
+        }
     }
 }
