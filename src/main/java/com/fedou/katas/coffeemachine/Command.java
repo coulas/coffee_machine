@@ -9,5 +9,5 @@ public class Command {
         this.nbSugar = nbSugar;
     }
 
-    public enum DrinkType { TEA }
+    public enum DrinkType {CHOCOLATE, COFFEE, TEA }
 }
