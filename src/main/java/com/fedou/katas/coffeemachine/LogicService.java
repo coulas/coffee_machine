@@ -12,6 +12,10 @@ public class LogicService {
         switch (command.drink) {
             case TEA:
                 message.append("T");
+                if (command.amountPaid < 40) {
+                    maker.make("M:" + "Tea" + " costs " + (40 - command.amountPaid) + " cents more");
+                    return;
+                }
                 break;
             case CHOCOLATE:
                 message.append("H");
@@ -20,6 +24,11 @@ public class LogicService {
                 message.append("C");
                 break;
         }
+        handleSugar(command, message);
+        maker.make(message.toString());
+    }
+
+    private void handleSugar(Command command, StringBuilder message) {
         if (command.nbSugar == 0) {
             message.append("::");
         } else {
@@ -27,6 +36,5 @@ public class LogicService {
                     .append(command.nbSugar)
                     .append(":0");
         }
-        maker.make(message.toString());
     }
 }

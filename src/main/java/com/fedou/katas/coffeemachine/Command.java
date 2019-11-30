@@ -5,7 +5,7 @@ public class Command {
 
     final DrinkType drink;
     final int nbSugar;
-    private final int amountPaid;
+    final int amountPaid;
 
     public Command(DrinkType drink, int nbSugar, int amountPaid) {
         this.drink = drink;
