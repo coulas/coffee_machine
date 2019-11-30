@@ -13,18 +13,22 @@ public class LogicService {
             case TEA:
                 if (handleCost("Tea", 40, command.amountPaid)) return;
                 message.append("T");
+                handleSugar(command, message);
+                maker.make(message.toString());
                 break;
             case CHOCOLATE:
                 if (handleCost("Chocolate", 50, command.amountPaid)) return;
                 message.append("H");
+                handleSugar(command, message);
+                maker.make(message.toString());
                 break;
             case COFFEE:
                 if (handleCost("Coffee", 60, command.amountPaid)) return;
                 message.append("C");
+                handleSugar(command, message);
+                maker.make(message.toString());
                 break;
         }
-        handleSugar(command, message);
-        maker.make(message.toString());
     }
 
     private boolean handleCost(String drink, int price, int amountPaid) {
