@@ -11,21 +11,28 @@ public class LogicService {
         StringBuilder message = new StringBuilder();
         switch (command.drink) {
             case TEA:
+                if (handleCost("Tea", 40, command.amountPaid)) return;
                 message.append("T");
-                if (command.amountPaid < 40) {
-                    maker.make("M:" + "Tea" + " costs " + (40 - command.amountPaid) + " cents more");
-                    return;
-                }
                 break;
             case CHOCOLATE:
+                if (handleCost("Chocolate", 50, command.amountPaid)) return;
                 message.append("H");
                 break;
             case COFFEE:
+                if (handleCost("Coffee", 60, command.amountPaid)) return;
                 message.append("C");
                 break;
         }
         handleSugar(command, message);
         maker.make(message.toString());
+    }
+
+    private boolean handleCost(String drink, int price, int amountPaid) {
+        if (amountPaid < 40) {
+            maker.make("M:" + drink + " costs " + (price - amountPaid) + " cents more");
+            return true;
+        }
+        return false;
     }
 
     private void handleSugar(Command command, StringBuilder message) {
