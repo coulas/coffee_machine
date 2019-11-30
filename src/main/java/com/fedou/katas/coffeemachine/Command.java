@@ -5,10 +5,11 @@ public class Command {
 
     final DrinkType drink;
     final int nbSugar;
+    private final int amountPaid;
 
-    public Command(Command.DrinkType drink, int nbSugar) {
+    public Command(DrinkType drink, int nbSugar, int amountPaid) {
         this.drink = drink;
         this.nbSugar = nbSugar;
+        this.amountPaid = amountPaid;
     }
-
 }
