@@ -28,7 +28,7 @@ public class LogicService {
     }
 
     private boolean handleCost(String drink, int price, int amountPaid) {
-        if (amountPaid < 40) {
+        if (amountPaid < price) {
             maker.make("M:" + drink + " costs " + (price - amountPaid) + " cents more");
             return true;
         }
