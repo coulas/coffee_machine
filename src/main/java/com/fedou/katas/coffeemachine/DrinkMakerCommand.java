@@ -37,7 +37,7 @@ class DrinkMakerCommand {
         return machineName + handleExtraHot(command.extraHot) + handleSugar(command.nbSugar);
     }
 
-    private String handleExtraHot(boolean extraHot) {
+    protected String handleExtraHot(boolean extraHot) {
         return extraHot ? "h" : "";
     }
 
@@ -62,6 +62,11 @@ class DrinkMakerCommand {
         @Override
         protected String handleSugar(int nbSugar) {
             return "::";
+        }
+
+        @Override
+        protected String handleExtraHot(boolean extraHot) {
+            return "";
         }
     }
 }
