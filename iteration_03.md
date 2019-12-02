@@ -12,8 +12,11 @@ Let us see if your implementation is flexible enough to welcome those changes wi
 Here are the new protocol commands added to the new firmware of the drink maker:
 
 `"O::" (Drink maker will make one orange juice)`
+
 `"Ch::" (Drink maker will make an extra hot coffee with no sugar)`
+
 `"Hh:1:0" (Drink maker will make an extra hot chocolate with one sugar and a stick)`
+
 `"Th:2:0" (The drink maker will make an extra hot tea with two sugar and a stick)`
 ##
 [Previous iteration](iteration_02.md)

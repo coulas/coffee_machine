@@ -30,6 +30,7 @@ class DrinkMakerCommand {
         if (command.amountPaid < priceInCents) {
             return displayMissingAmount(displayName, priceInCents, command.amountPaid);
         }
+        // return machineName + handleExtraHot() + handleSugar(command);
         return machineName + handleSugar(command);
     }
 
