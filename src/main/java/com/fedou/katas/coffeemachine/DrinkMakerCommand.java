@@ -34,18 +34,22 @@ class DrinkMakerCommand {
             return displayMissingAmount(displayName, priceInCents, command.amountPaid);
         }
         // return machineName + handleExtraHot() + handleSugar(command);
-        return machineName + handleSugar(command);
+        return machineName + handleExtraHot(command.extraHot) + handleSugar(command.nbSugar);
+    }
+
+    private String handleExtraHot(boolean extraHot) {
+        return extraHot ? "h" : "";
     }
 
     private String displayMissingAmount(String displayName, int price, int amountPaid) {
         return "M:" + displayName + " costs " + (price - amountPaid) + " cents more";
     }
 
-    protected String handleSugar(Command command) {
-        if (command.nbSugar == 0) {
+    protected String handleSugar(int nbSugar) {
+        if (nbSugar == 0) {
             return "::";
         } else {
-            return ":" + command.nbSugar + ":0";
+            return ":" + nbSugar + ":0";
         }
     }
 
@@ -56,7 +60,7 @@ class DrinkMakerCommand {
         }
 
         @Override
-        protected String handleSugar(Command command) {
+        protected String handleSugar(int nbSugar) {
             return "::";
         }
     }
