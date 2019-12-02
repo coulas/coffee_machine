@@ -4,6 +4,7 @@ class DrinkMakerCommand {
     private static final DrinkMakerCommand TEA = new DrinkMakerCommand("Tea", "T", 40);
     private static final DrinkMakerCommand CHOCOLATE = new DrinkMakerCommand("Chocolate", "H", 50);
     private static final DrinkMakerCommand COFFEE = new DrinkMakerCommand("Coffee", "C", 60);
+    private static final DrinkMakerCommand ORANGE = new OrangeMakerCommand(60);
     private final String displayName;
     private final String machineName;
     private final int priceInCents;
@@ -16,6 +17,8 @@ class DrinkMakerCommand {
                 return CHOCOLATE.handleCommand(command);
             case COFFEE:
                 return COFFEE.handleCommand(command);
+            case ORANGE:
+                return ORANGE.handleCommand(command);
         }
         return "M:Command not understood";
     }
@@ -38,7 +41,7 @@ class DrinkMakerCommand {
         return "M:" + displayName + " costs " + (price - amountPaid) + " cents more";
     }
 
-    private String handleSugar(Command command) {
+    protected String handleSugar(Command command) {
         if (command.nbSugar == 0) {
             return "::";
         } else {
@@ -47,4 +50,14 @@ class DrinkMakerCommand {
     }
 
 
+    private static class OrangeMakerCommand extends DrinkMakerCommand {
+        public OrangeMakerCommand(int priceInCents) {
+            super("Orange", "O", priceInCents);
+        }
+
+        @Override
+        protected String handleSugar(Command command) {
+            return "::";
+        }
+    }
 }
