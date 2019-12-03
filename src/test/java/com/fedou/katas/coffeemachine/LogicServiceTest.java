@@ -83,30 +83,19 @@ class LogicServiceTest {
     }
 
 
-    private DynamicTest testMakingDrinkWithFullDetailsAndExpectations(String displayName, Command.DrinkType drink, boolean extraHot, int nbSugar, int amountPaid, String expectedResult) {
-        return DynamicTest.dynamicTest(displayName, () -> {
-            // dynamicTest is NOT surrounded by @beforeEach and @AfterEach executions, only the @TestFactory is, so I need to explicitly handle mocks lifecycle.
-            Mockito.reset(maker);
-
-            logic.receives(new Command(drink, extraHot, nbSugar, amountPaid));
-            Mockito.verify(maker).make(Mockito.eq(expectedResult));
-        });
-    }
-
     @TestFactory
     DynamicTest[] should_make_tea_with_enough_money() {
         Command.DrinkType drink = Command.DrinkType.TEA;
         return new DynamicTest[]{
-                testMakingDrinkWithMoney("Tea costs 40 cents as shown when no money is provided", drink, 0, "M:Tea costs 40 cents more"),
-                testMakingDrinkWithMoney("Tea is done with 1 euro", drink, 100, "T::"),
-                testMakingDrinkWithMoney("Tea is done with 40 cents", drink, 40, "T::"),
-                testMakingDrinkWithMoney("Tea is not done when 1 cent misses", drink, 39, "M:Tea costs 1 cents more"),
+                testMakingDrinkWithMoney("Tea costs 40 cents as shown when no money is provided",
+                        drink, 0, "M:Tea costs 40 cents more"),
+                testMakingDrinkWithMoney("Tea is done with 1 euro",
+                        drink, 100, "T::"),
+                testMakingDrinkWithMoney("Tea is done with 40 cents",
+                        drink, 40, "T::"),
+                testMakingDrinkWithMoney("Tea is not done when 1 cent misses",
+                        drink, 39, "M:Tea costs 1 cents more"),
         };
-    }
-
-    private DynamicTest testMakingDrinkWithMoney(String displayName, Command.DrinkType drink, int amountPaid, String expectedResult) {
-        return testMakingDrinkWithFullDetailsAndExpectations(displayName,
-                drink, false, 0, amountPaid, expectedResult);
     }
 
     @TestFactory
@@ -151,4 +140,20 @@ class LogicServiceTest {
                         Command.DrinkType.ORANGE, 59, "M:Orange costs 1 cents more"),
         };
     }
+
+    private DynamicTest testMakingDrinkWithMoney(String displayName, Command.DrinkType drink, int amountPaid, String expectedResult) {
+        return testMakingDrinkWithFullDetailsAndExpectations(displayName,
+                drink, false, 0, amountPaid, expectedResult);
+    }
+
+    private DynamicTest testMakingDrinkWithFullDetailsAndExpectations(String displayName, Command.DrinkType drink, boolean extraHot, int nbSugar, int amountPaid, String expectedResult) {
+        return DynamicTest.dynamicTest(displayName, () -> {
+            // dynamicTest is NOT surrounded by @beforeEach and @AfterEach executions, only the @TestFactory is, so I need to explicitly handle mocks lifecycle.
+            Mockito.reset(maker);
+
+            logic.receives(new Command(drink, extraHot, nbSugar, amountPaid));
+            Mockito.verify(maker).make(Mockito.eq(expectedResult));
+        });
+    }
+
 }
