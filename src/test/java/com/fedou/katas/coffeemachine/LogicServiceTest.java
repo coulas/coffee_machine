@@ -23,61 +23,71 @@ class LogicServiceTest {
     @TestFactory
     DynamicTest[] should_make_right_drink() {
         return new DynamicTest[]{
-                testMakeRightDrinkWithoutSugar("Tea is T::", Command.DrinkType.TEA, "T::"),
-                testMakeRightDrinkWithoutSugar("Hot Chocolate is H::", Command.DrinkType.CHOCOLATE, "H::"),
-                testMakeRightDrinkWithoutSugar("Coffee is C::", Command.DrinkType.COFFEE, "C::"),
-                testMakeRightDrinkWithoutSugar("Orange juice is O::", Command.DrinkType.ORANGE, "O::"),
+                testOnlyMakeRightDrink("Tea is T::", Command.DrinkType.TEA, "T::"),
+                testOnlyMakeRightDrink("Hot Chocolate is H::", Command.DrinkType.CHOCOLATE, "H::"),
+                testOnlyMakeRightDrink("Coffee is C::", Command.DrinkType.COFFEE, "C::"),
+                testOnlyMakeRightDrink("Orange juice is O::", Command.DrinkType.ORANGE, "O::"),
         };
     }
 
-    private DynamicTest testMakeRightDrinkWithoutSugar(String displayName, Command.DrinkType drink, String expectedResult) {
-        return testMakingDrinkWithExpectations(displayName, drink, false, 0, 100, expectedResult);
+    private DynamicTest testOnlyMakeRightDrink(String displayName, Command.DrinkType drink, String expectedResult) {
+        return testMakingDrinkWithFullDetailsAndExpectations(displayName,
+                drink, false, 0, 100, expectedResult);
     }
 
     @TestFactory
     DynamicTest[] should_make_extra_hot_drink_or_always_cold() {
         return new DynamicTest[]{
-                testMakeRightExtraHotDrinkWithoutSugar("Extra Hot Tea is Th::", Command.DrinkType.TEA, "Th::"),
-                testMakeRightExtraHotDrinkWithoutSugar("Extra Hot Chocolate is Hh::", Command.DrinkType.CHOCOLATE, "Hh::"),
-                testMakeRightExtraHotDrinkWithoutSugar("Extra Hot Coffee is Ch::", Command.DrinkType.COFFEE, "Ch::"),
-                testMakeRightExtraHotDrinkWithoutSugar("Extra Hot Orange juice is COLD O::", Command.DrinkType.ORANGE, "O::"),
+                testOnlyMakeExtraHotDrink("Extra Hot Tea is Th::", Command.DrinkType.TEA, "Th::"),
+                testOnlyMakeExtraHotDrink("Extra Hot Chocolate is Hh::", Command.DrinkType.CHOCOLATE, "Hh::"),
+                testOnlyMakeExtraHotDrink("Extra Hot Coffee is Ch::", Command.DrinkType.COFFEE, "Ch::"),
+                testOnlyMakeExtraHotDrink("Extra Hot Orange juice is COLD O::", Command.DrinkType.ORANGE, "O::"),
         };
     }
 
-    private DynamicTest testMakeRightExtraHotDrinkWithoutSugar(String displayName, Command.DrinkType drink, String expectedResult) {
-        return testMakingDrinkWithExpectations(displayName, drink, true, 0, 100, expectedResult);
+    private DynamicTest testOnlyMakeExtraHotDrink(String displayName, Command.DrinkType drink, String expectedResult) {
+        return testMakingDrinkWithFullDetailsAndExpectations(displayName, drink, true, 0, 100, expectedResult);
     }
 
 
     @TestFactory
-    List<DynamicTest> should_make_hot_drinks_with_sugar() {
+    List<DynamicTest> should_make_drinks_that_may_have_sugar() {
         List<DynamicTest> tests = new ArrayList<>();
-        tests.addAll(hotDrinkShouldHandleSugar(Command.DrinkType.TEA, "Tea", "T"));
-        tests.addAll(hotDrinkShouldHandleSugar(Command.DrinkType.CHOCOLATE, "Chocolate", "H"));
-        tests.addAll(hotDrinkShouldHandleSugar(Command.DrinkType.COFFEE, "Coffee", "C"));
+        tests.addAll(testDrinksThatShouldHandleSugar(Command.DrinkType.TEA, "Tea", "T"));
+        tests.addAll(testDrinksThatShouldHandleSugar(Command.DrinkType.CHOCOLATE, "Chocolate", "H"));
+        tests.addAll(testDrinksThatShouldHandleSugar(Command.DrinkType.COFFEE, "Coffee", "C"));
         return tests;
     }
 
-    private List<DynamicTest> hotDrinkShouldHandleSugar(Command.DrinkType drink, String displayName, String machineName) {
+    private List<DynamicTest> testDrinksThatShouldHandleSugar(Command.DrinkType drink, String displayName, String machineName) {
         return Arrays.asList(
-                testMakingDrinkWithExpectations("No Sugar with " + displayName + " is " + machineName + "::", drink, false, 0, 100, machineName + "::"),
-                testMakingDrinkWithExpectations("One Sugar with " + displayName + " is" + machineName + ":1:0", drink, false, 1, 100, machineName + ":1:0"),
-                testMakingDrinkWithExpectations("Two Sugar with " + displayName + " is " + machineName + ":2:0", drink, false, 2, 100, machineName + ":2:0")
+                testMakingDrinkWithFullDetailsAndExpectations("No Sugar with " + displayName + " is " + machineName + "::",
+                        drink, false, 0, 100, machineName + "::"),
+                testMakingDrinkWithFullDetailsAndExpectations("One Sugar with " + displayName + " is" + machineName + ":1:0",
+                        drink, false, 1, 100, machineName + ":1:0"),
+                testMakingDrinkWithFullDetailsAndExpectations("Two Sugar with " + displayName + " is " + machineName + ":2:0",
+                        drink, false, 2, 100, machineName + ":2:0")
         );
     }
+
     @TestFactory
-    List<DynamicTest> should_make_cold_drinks_ignoring_sugar() {
+    List<DynamicTest> should_make_drinks_that_may_not_have_sugar() {
         return Arrays.asList(
-                testMakingDrinkWithExpectations("No Sugar with Orange is O::", Command.DrinkType.ORANGE, false, 0, 100, "O::"),
-                testMakingDrinkWithExpectations("One Sugar with Orange is O::", Command.DrinkType.ORANGE, false, 1, 100, "O::"),
-                testMakingDrinkWithExpectations("Two Sugar with Orange is O::", Command.DrinkType.ORANGE, false, 2, 100, "O::")
+                testMakingDrinkWithFullDetailsAndExpectations("No Sugar with Orange is O::",
+                        Command.DrinkType.ORANGE, false, 0, 100, "O::"),
+                testMakingDrinkWithFullDetailsAndExpectations("One Sugar with Orange is O::",
+                        Command.DrinkType.ORANGE, false, 1, 100, "O::"),
+                testMakingDrinkWithFullDetailsAndExpectations("Two Sugar with Orange is O::",
+                        Command.DrinkType.ORANGE, false, 2, 100, "O::")
         );
     }
 
 
-    private DynamicTest testMakingDrinkWithExpectations(String displayName, Command.DrinkType drink, boolean extraHot, int nbSugar, int amountPaid, String expectedResult) {
+    private DynamicTest testMakingDrinkWithFullDetailsAndExpectations(String displayName, Command.DrinkType drink, boolean extraHot, int nbSugar, int amountPaid, String expectedResult) {
         return DynamicTest.dynamicTest(displayName, () -> {
+            // dynamicTest is NOT surrounded by @beforeEach and @AfterEach executions, only the @TestFactory is, so I need to explicitly handle mocks lifecycle.
             Mockito.reset(maker);
+
             logic.receives(new Command(drink, extraHot, nbSugar, amountPaid));
             Mockito.verify(maker).make(Mockito.eq(expectedResult));
         });
@@ -85,105 +95,60 @@ class LogicServiceTest {
 
     @TestFactory
     DynamicTest[] should_make_tea_with_enough_money() {
+        Command.DrinkType drink = Command.DrinkType.TEA;
         return new DynamicTest[]{
-                DynamicTest.dynamicTest("Tea costs 40 cents as shown when no money is provided", () -> {
-                    Mockito.reset(maker);
-                    logic.receives(new Command(Command.DrinkType.TEA, false, 0, 0));
-                    Mockito.verify(maker).make(Mockito.eq("M:Tea costs 40 cents more"));
-                }),
-                DynamicTest.dynamicTest("Tea is done with 1 euro", () -> {
-                    Mockito.reset(maker);
-                    logic.receives(new Command(Command.DrinkType.TEA, false, 0, 100));
-                    Mockito.verify(maker).make(Mockito.eq("T::"));
-                }),
-                DynamicTest.dynamicTest("Tea is done with 40 cents", () -> {
-                    Mockito.reset(maker);
-                    logic.receives(new Command(Command.DrinkType.TEA, false, 0, 40));
-                    Mockito.verify(maker).make(Mockito.eq("T::"));
-                }),
-                DynamicTest.dynamicTest("Tea is not done when 1 cent misses", () -> {
-                    Mockito.reset(maker);
-                    logic.receives(new Command(Command.DrinkType.TEA, false, 0, 39));
-                    Mockito.verify(maker).make(Mockito.eq("M:Tea costs 1 cents more"));
-                }),
+                testMakingDrinkWithMoney("Tea costs 40 cents as shown when no money is provided", drink, 0, "M:Tea costs 40 cents more"),
+                testMakingDrinkWithMoney("Tea is done with 1 euro", drink, 100, "T::"),
+                testMakingDrinkWithMoney("Tea is done with 40 cents", drink, 40, "T::"),
+                testMakingDrinkWithMoney("Tea is not done when 1 cent misses", drink, 39, "M:Tea costs 1 cents more"),
         };
+    }
+
+    private DynamicTest testMakingDrinkWithMoney(String displayName, Command.DrinkType drink, int amountPaid, String expectedResult) {
+        return testMakingDrinkWithFullDetailsAndExpectations(displayName,
+                drink, false, 0, amountPaid, expectedResult);
     }
 
     @TestFactory
     DynamicTest[] should_make_coffee_with_enough_money() {
+        Command.DrinkType drink = Command.DrinkType.COFFEE;
         return new DynamicTest[]{
-                DynamicTest.dynamicTest("Coffee costs 60 cents as shown when no money is provided", () -> {
-                    Mockito.reset(maker);
-                    logic.receives(new Command(Command.DrinkType.COFFEE, false, 0, 0));
-                    Mockito.verify(maker).make(Mockito.eq("M:Coffee costs 60 cents more"));
-                }),
-                DynamicTest.dynamicTest("Coffee is done with 1 euro", () -> {
-                    Mockito.reset(maker);
-                    logic.receives(new Command(Command.DrinkType.COFFEE, false, 0, 100));
-                    Mockito.verify(maker).make(Mockito.eq("C::"));
-                }),
-                DynamicTest.dynamicTest("Coffee is done with 50 cents", () -> {
-                    Mockito.reset(maker);
-                    logic.receives(new Command(Command.DrinkType.COFFEE, false, 0, 60));
-                    Mockito.verify(maker).make(Mockito.eq("C::"));
-                }),
-                DynamicTest.dynamicTest("Coffee is not done when 1 cent misses", () -> {
-                    Mockito.reset(maker);
-                    logic.receives(new Command(Command.DrinkType.COFFEE, false, 0, 59));
-                    Mockito.verify(maker).make(Mockito.eq("M:Coffee costs 1 cents more"));
-                }),
+                testMakingDrinkWithMoney("Coffee costs 60 cents as shown when no money is provided",
+                        drink, 0,"M:Coffee costs 60 cents more"),
+                testMakingDrinkWithMoney("Coffee is done with 1 euro",
+                        drink, 100, "C::"),
+                testMakingDrinkWithMoney("Coffee is done with 50 cents",
+                        drink, 60,"C::"),
+                testMakingDrinkWithMoney("Coffee is not done when 1 cent misses",
+                        drink, 59, "M:Coffee costs 1 cents more"),
         };
     }
 
     @TestFactory
     DynamicTest[] should_make_chocolate_with_enough_money() {
         return new DynamicTest[]{
-                DynamicTest.dynamicTest("Chocolate costs 50 cents as shown when no money is provided", () -> {
-                    Mockito.reset(maker);
-                    logic.receives(new Command(Command.DrinkType.CHOCOLATE, false, 0, 0));
-                    Mockito.verify(maker).make(Mockito.eq("M:Chocolate costs 50 cents more"));
-                }),
-                DynamicTest.dynamicTest("Chocolate is done with 1 euro", () -> {
-                    Mockito.reset(maker);
-                    logic.receives(new Command(Command.DrinkType.CHOCOLATE, false, 0, 100));
-                    Mockito.verify(maker).make(Mockito.eq("H::"));
-                }),
-                DynamicTest.dynamicTest("Chocolate is done with 50 cents", () -> {
-                    Mockito.reset(maker);
-                    logic.receives(new Command(Command.DrinkType.CHOCOLATE, false, 0, 50));
-                    Mockito.verify(maker).make(Mockito.eq("H::"));
-                }),
-                DynamicTest.dynamicTest("Chocolate is not done when 1 cent misses", () -> {
-                    Mockito.reset(maker);
-                    logic.receives(new Command(Command.DrinkType.CHOCOLATE, false, 0, 49));
-                    Mockito.verify(maker).make(Mockito.eq("M:Chocolate costs 1 cents more"));
-                }),
+                testMakingDrinkWithMoney("Chocolate costs 50 cents as shown when no money is provided",
+                        Command.DrinkType.CHOCOLATE, 0, "M:Chocolate costs 50 cents more"),
+                testMakingDrinkWithMoney("Chocolate is done with 1 euro",
+                        Command.DrinkType.CHOCOLATE, 100, "H::"),
+                testMakingDrinkWithMoney("Chocolate is done with 50 cents",
+                        Command.DrinkType.CHOCOLATE, 50, "H::"),
+                testMakingDrinkWithMoney("Chocolate is not done when 1 cent misses",
+                        Command.DrinkType.CHOCOLATE, 49, "M:Chocolate costs 1 cents more"),
         };
     }
 
     @TestFactory
     DynamicTest[] should_make_orange_with_enough_money() {
         return new DynamicTest[]{
-                DynamicTest.dynamicTest("Orange costs 60 cents as shown when no money is provided", () -> {
-                    Mockito.reset(maker);
-                    logic.receives(new Command(Command.DrinkType.ORANGE, false, 0, 0));
-                    Mockito.verify(maker).make(Mockito.eq("M:Orange costs 60 cents more"));
-                }),
-                DynamicTest.dynamicTest("Orange is done with 1 euro", () -> {
-                    Mockito.reset(maker);
-                    logic.receives(new Command(Command.DrinkType.ORANGE, false, 0, 100));
-                    Mockito.verify(maker).make(Mockito.eq("O::"));
-                }),
-                DynamicTest.dynamicTest("Orange is done with 60 cents", () -> {
-                    Mockito.reset(maker);
-                    logic.receives(new Command(Command.DrinkType.ORANGE, false, 0, 60));
-                    Mockito.verify(maker).make(Mockito.eq("O::"));
-                }),
-                DynamicTest.dynamicTest("Orange is not done when 1 cent misses", () -> {
-                    Mockito.reset(maker);
-                    logic.receives(new Command(Command.DrinkType.ORANGE, false, 0, 59));
-                    Mockito.verify(maker).make(Mockito.eq("M:Orange costs 1 cents more"));
-                }),
+                testMakingDrinkWithMoney("Orange costs 60 cents as shown when no money is provided",
+                        Command.DrinkType.ORANGE, 0, "M:Orange costs 60 cents more"),
+                testMakingDrinkWithMoney("Orange is done with 1 euro",
+                        Command.DrinkType.ORANGE, 100, "O::"),
+                testMakingDrinkWithMoney("Orange is done with 60 cents",
+                        Command.DrinkType.ORANGE, 60, "O::"),
+                testMakingDrinkWithMoney("Orange is not done when 1 cent misses",
+                        Command.DrinkType.ORANGE, 59, "M:Orange costs 1 cents more"),
         };
     }
 }
