@@ -1,13 +1,16 @@
 package com.fedou.katas.coffeemachine;
 
-import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.TestFactory;
+import org.assertj.core.api.AbstractStringAssert;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,6 +20,8 @@ class LogicServiceTest {
 
     @Mock
     DrinkMakerService maker;
+    @Mock
+    ReportService reporter;
     @InjectMocks
     LogicService logic;
 
@@ -82,68 +87,70 @@ class LogicServiceTest {
         );
     }
 
+    @Nested
+    class Handle_Money {
+        @TestFactory
+        DynamicTest[] should_make_tea_with_enough_money() {
+            Command.DrinkType drink = Command.DrinkType.TEA;
+            return new DynamicTest[]{
+                    testMakingDrinkWithMoney("Tea costs 40 cents as shown when no money is provided",
+                            drink, 0, "M:Tea costs 40 cents more"),
+                    testMakingDrinkWithMoney("Tea is done with 1 euro",
+                            drink, 100, "T::"),
+                    testMakingDrinkWithMoney("Tea is done with 40 cents",
+                            drink, 40, "T::"),
+                    testMakingDrinkWithMoney("Tea is not done when 1 cent misses",
+                            drink, 39, "M:Tea costs 1 cents more"),
+            };
+        }
 
-    @TestFactory
-    DynamicTest[] should_make_tea_with_enough_money() {
-        Command.DrinkType drink = Command.DrinkType.TEA;
-        return new DynamicTest[]{
-                testMakingDrinkWithMoney("Tea costs 40 cents as shown when no money is provided",
-                        drink, 0, "M:Tea costs 40 cents more"),
-                testMakingDrinkWithMoney("Tea is done with 1 euro",
-                        drink, 100, "T::"),
-                testMakingDrinkWithMoney("Tea is done with 40 cents",
-                        drink, 40, "T::"),
-                testMakingDrinkWithMoney("Tea is not done when 1 cent misses",
-                        drink, 39, "M:Tea costs 1 cents more"),
-        };
-    }
+        @TestFactory
+        DynamicTest[] should_make_coffee_with_enough_money() {
+            Command.DrinkType drink = Command.DrinkType.COFFEE;
+            return new DynamicTest[]{
+                    testMakingDrinkWithMoney("Coffee costs 60 cents as shown when no money is provided",
+                            drink, 0, "M:Coffee costs 60 cents more"),
+                    testMakingDrinkWithMoney("Coffee is done with 1 euro",
+                            drink, 100, "C::"),
+                    testMakingDrinkWithMoney("Coffee is done with 50 cents",
+                            drink, 60, "C::"),
+                    testMakingDrinkWithMoney("Coffee is not done when 1 cent misses",
+                            drink, 59, "M:Coffee costs 1 cents more"),
+            };
+        }
 
-    @TestFactory
-    DynamicTest[] should_make_coffee_with_enough_money() {
-        Command.DrinkType drink = Command.DrinkType.COFFEE;
-        return new DynamicTest[]{
-                testMakingDrinkWithMoney("Coffee costs 60 cents as shown when no money is provided",
-                        drink, 0,"M:Coffee costs 60 cents more"),
-                testMakingDrinkWithMoney("Coffee is done with 1 euro",
-                        drink, 100, "C::"),
-                testMakingDrinkWithMoney("Coffee is done with 50 cents",
-                        drink, 60,"C::"),
-                testMakingDrinkWithMoney("Coffee is not done when 1 cent misses",
-                        drink, 59, "M:Coffee costs 1 cents more"),
-        };
-    }
+        @TestFactory
+        DynamicTest[] should_make_chocolate_with_enough_money() {
+            return new DynamicTest[]{
+                    testMakingDrinkWithMoney("Chocolate costs 50 cents as shown when no money is provided",
+                            Command.DrinkType.CHOCOLATE, 0, "M:Chocolate costs 50 cents more"),
+                    testMakingDrinkWithMoney("Chocolate is done with 1 euro",
+                            Command.DrinkType.CHOCOLATE, 100, "H::"),
+                    testMakingDrinkWithMoney("Chocolate is done with 50 cents",
+                            Command.DrinkType.CHOCOLATE, 50, "H::"),
+                    testMakingDrinkWithMoney("Chocolate is not done when 1 cent misses",
+                            Command.DrinkType.CHOCOLATE, 49, "M:Chocolate costs 1 cents more"),
+            };
+        }
 
-    @TestFactory
-    DynamicTest[] should_make_chocolate_with_enough_money() {
-        return new DynamicTest[]{
-                testMakingDrinkWithMoney("Chocolate costs 50 cents as shown when no money is provided",
-                        Command.DrinkType.CHOCOLATE, 0, "M:Chocolate costs 50 cents more"),
-                testMakingDrinkWithMoney("Chocolate is done with 1 euro",
-                        Command.DrinkType.CHOCOLATE, 100, "H::"),
-                testMakingDrinkWithMoney("Chocolate is done with 50 cents",
-                        Command.DrinkType.CHOCOLATE, 50, "H::"),
-                testMakingDrinkWithMoney("Chocolate is not done when 1 cent misses",
-                        Command.DrinkType.CHOCOLATE, 49, "M:Chocolate costs 1 cents more"),
-        };
-    }
+        @TestFactory
+        DynamicTest[] should_make_orange_with_enough_money() {
+            return new DynamicTest[]{
+                    testMakingDrinkWithMoney("Orange costs 60 cents as shown when no money is provided",
+                            Command.DrinkType.ORANGE, 0, "M:Orange costs 60 cents more"),
+                    testMakingDrinkWithMoney("Orange is done with 1 euro",
+                            Command.DrinkType.ORANGE, 100, "O::"),
+                    testMakingDrinkWithMoney("Orange is done with 60 cents",
+                            Command.DrinkType.ORANGE, 60, "O::"),
+                    testMakingDrinkWithMoney("Orange is not done when 1 cent misses",
+                            Command.DrinkType.ORANGE, 59, "M:Orange costs 1 cents more"),
+            };
+        }
 
-    @TestFactory
-    DynamicTest[] should_make_orange_with_enough_money() {
-        return new DynamicTest[]{
-                testMakingDrinkWithMoney("Orange costs 60 cents as shown when no money is provided",
-                        Command.DrinkType.ORANGE, 0, "M:Orange costs 60 cents more"),
-                testMakingDrinkWithMoney("Orange is done with 1 euro",
-                        Command.DrinkType.ORANGE, 100, "O::"),
-                testMakingDrinkWithMoney("Orange is done with 60 cents",
-                        Command.DrinkType.ORANGE, 60, "O::"),
-                testMakingDrinkWithMoney("Orange is not done when 1 cent misses",
-                        Command.DrinkType.ORANGE, 59, "M:Orange costs 1 cents more"),
-        };
-    }
-
-    private DynamicTest testMakingDrinkWithMoney(String displayName, Command.DrinkType drink, int amountPaid, String expectedResult) {
-        return testMakingDrinkWithFullDetailsAndExpectations(displayName,
-                drink, false, 0, amountPaid, expectedResult);
+        private DynamicTest testMakingDrinkWithMoney(String displayName, Command.DrinkType drink, int amountPaid, String expectedResult) {
+            return testMakingDrinkWithFullDetailsAndExpectations(displayName,
+                    drink, false, 0, amountPaid, expectedResult);
+        }
     }
 
     private DynamicTest testMakingDrinkWithFullDetailsAndExpectations(String displayName, Command.DrinkType drink, boolean extraHot, int nbSugar, int amountPaid, String expectedResult) {
@@ -156,4 +163,44 @@ class LogicServiceTest {
         });
     }
 
+    @Nested
+    class Handle_Reports {
+        // Create a stream to hold the output
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(baos);
+        private PrintStream old;
+
+        @BeforeEach
+        void useCustoumSysOut() {
+            // IMPORTANT: Save the old System.out!
+            old = System.out;
+            // Tell Java to use your special stream
+            System.setOut(ps);
+        }
+
+        @AfterEach
+        void reUseRealSysOut() {
+            // Put things back
+            System.out.flush();
+            System.setOut(old);
+            // Show what happened
+            System.err.println("you missed some logs:" + System.lineSeparator() + baos.toString());
+        }
+
+        @Test
+        void should_print_empty_report() {
+            verifyReport("empty report", "Total : 0€");
+        }
+
+        private void verifyReport(String description, String... expectations) {
+            logic.printReport();
+            System.out.flush();
+            AbstractStringAssert<?> stringAssert = Assertions.assertThat(baos.toString())
+                    .describedAs(description);
+            for (String expectation : expectations) {
+                stringAssert.containsIgnoringCase(expectation);
+            }
+        }
+
+    }
 }

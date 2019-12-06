@@ -9,18 +9,18 @@ class DrinkMakerCommand {
     private final String machineName;
     private final int priceInCents;
 
-    public static String buildMachineCommand(Command command) {
+    public static DrinkMakerCommand buildMachineCommand(Command command) {
         switch (command.drink) {
             case TEA:
-                return TEA.handleCommand(command);
+                return TEA;
             case CHOCOLATE:
-                return CHOCOLATE.handleCommand(command);
+                return CHOCOLATE;
             case COFFEE:
-                return COFFEE.handleCommand(command);
+                return COFFEE;
             case ORANGE:
-                return ORANGE.handleCommand(command);
+                return ORANGE;
         }
-        return "M:Command not understood";
+        return null;
     }
 
     private DrinkMakerCommand(String displayName, String machineName, int priceInCents) {
@@ -29,7 +29,7 @@ class DrinkMakerCommand {
         this.priceInCents = priceInCents;
     }
 
-    private String handleCommand(Command command) {
+    public String handleCommand(Command command) {
         if (command.amountPaid < priceInCents) {
             return displayMissingAmount(displayName, priceInCents, command.amountPaid);
         }
