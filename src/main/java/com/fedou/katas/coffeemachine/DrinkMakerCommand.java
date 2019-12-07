@@ -5,9 +5,9 @@ class DrinkMakerCommand {
     private static final DrinkMakerCommand CHOCOLATE = new DrinkMakerCommand("Chocolate", "H", 50);
     private static final DrinkMakerCommand COFFEE = new DrinkMakerCommand("Coffee", "C", 60);
     private static final DrinkMakerCommand ORANGE = new OrangeMakerCommand(60);
-    private final String displayName;
+    final String displayName;
     private final String machineName;
-    private final int priceInCents;
+    final int priceInCents;
 
     public static DrinkMakerCommand buildMachineCommand(Command command) {
         switch (command.drink) {

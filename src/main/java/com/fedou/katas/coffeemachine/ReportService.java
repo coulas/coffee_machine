@@ -7,6 +7,6 @@ public class ReportService {
 
     public void printReport() {
         // print sums by type and total
-        System.out.println("");
+        System.out.println("Total: 0.00€");
     }
 }

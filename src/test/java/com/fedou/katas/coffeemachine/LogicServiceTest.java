@@ -4,9 +4,12 @@ import org.assertj.core.api.AbstractStringAssert;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.ByteArrayOutputStream;
@@ -20,8 +23,8 @@ class LogicServiceTest {
 
     @Mock
     DrinkMakerService maker;
-    @Mock
-    ReportService reporter;
+    @Spy
+    ReportService reporter = new ReportService();
     @InjectMocks
     LogicService logic;
 
@@ -184,21 +187,40 @@ class LogicServiceTest {
             System.out.flush();
             System.setOut(old);
             // Show what happened
-            System.err.println("you missed some logs:" + System.lineSeparator() + baos.toString());
+            String remaining = baos.toString();
+            if (!remaining.isEmpty()) {
+                System.err.println("you missed some logs:" + System.lineSeparator() + remaining);
+            }
         }
 
         @Test
         void should_print_empty_report() {
-            verifyReport("empty report", "Total : 0€");
+            verifyReport("empty report", "Total: 0.00€");
+        }
+
+        @ParameterizedTest
+        @EnumSource(Command.DrinkType.class)
+        void should_report_each_drink_type(Command.DrinkType drink) {
+            Command command = new Command(drink, false, 0, 100);
+            logic.receives(command);
+            DrinkMakerCommand drinkMakerCommand = DrinkMakerCommand.buildMachineCommand(command);
+            String priceInEuros = String.format("%.2f", drinkMakerCommand.priceInCents / 100.0);
+            verifyReport("report for one drink of " + drink,
+                    drinkMakerCommand.displayName + " x1: " + priceInEuros + "€",
+                    "Total: " + priceInEuros + "€");
         }
 
         private void verifyReport(String description, String... expectations) {
             logic.printReport();
             System.out.flush();
-            AbstractStringAssert<?> stringAssert = Assertions.assertThat(baos.toString())
-                    .describedAs(description);
-            for (String expectation : expectations) {
-                stringAssert.containsIgnoringCase(expectation);
+            try {
+                AbstractStringAssert<?> stringAssert = Assertions.assertThat(baos.toString())
+                        .describedAs(description).containsSequence(expectations);
+/*                org.junit.jupiter.api.Assertions.assertAll(Arrays.stream(expectations).map(expectation -> {
+                    return () -> stringAssert.containsIgnoringCase(expectation);
+                }));
+  */          } finally {
+                baos.reset();
             }
         }
 
