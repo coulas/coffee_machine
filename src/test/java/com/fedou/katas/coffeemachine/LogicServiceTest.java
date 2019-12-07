@@ -16,6 +16,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
@@ -206,11 +207,35 @@ class LogicServiceTest {
             logic.receives(command);
 
             DrinkMakerCommand drinkMakerCommand = DrinkMakerCommand.buildMachineCommand(command);
-            String priceInEuros = String.format("%.2f", drinkMakerCommand.priceInCents / 100.0);
+            String priceInEuros = ReportService.centsToEuroString(drinkMakerCommand.priceInCents);
 
             verifyReport("report for one drink of " + drink,
                     drinkMakerCommand.displayName + " x1: " + priceInEuros + "€",
                     "Total: " + priceInEuros + "€");
+        }
+
+        @Test
+        void should_report_several_drinks() {
+            List<String> reportLine = new ArrayList<>();
+            int total = 0;
+            for (Command.DrinkType drink : Command.DrinkType.values()) {
+                Command command = send2CommandsForOneDrinkType(drink);
+
+                DrinkMakerCommand drinkMakerCommand = DrinkMakerCommand.buildMachineCommand(command);
+                int linePrice = 2 * drinkMakerCommand.priceInCents;
+                reportLine.add(drinkMakerCommand.displayName+" x2: "+ ReportService.centsToEuroString(linePrice));
+                total+=linePrice;
+            }
+            reportLine.add("Total: "+ReportService.centsToEuroString(total));
+            verifyReport("several drinks gives:", reportLine.toArray(new String[reportLine.size()]));
+        }
+
+        private Command send2CommandsForOneDrinkType(Command.DrinkType drink) {
+            Command command = new Command(drink, false, 0, 100);
+            logic.receives(command);
+            command = new Command(drink, true, 2, 100);
+            logic.receives(command);
+            return command;
         }
 
         private void verifyReport(String description, String... expectations) {

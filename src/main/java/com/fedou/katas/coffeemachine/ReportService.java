@@ -10,21 +10,25 @@ public class ReportService {
     private HashMap<String, Integer> prices = new HashMap<>();
 
 
-    public void report(DrinkMakerCommand machineCommand) {
+    public void record(DrinkMakerCommand machineCommand) {
          records.merge(machineCommand.displayName, 1, (count, increment) -> count + increment);
          prices.computeIfAbsent(machineCommand.displayName, (key) -> machineCommand.priceInCents);
     }
 
     public void printReport() {
         // print sums by type and total
-        float total = 0;
+        int total = 0;
         for (Map.Entry<String, Integer> entry : records.entrySet()) {
             String key = entry.getKey();
             Integer value = entry.getValue();
-            float amount = (prices.get(key) * value) / 100f;
-            System.out.println(key + " x" + value + ": " + String.format("%.2f", amount) + "€");
-            total += amount;
+            Integer price = prices.get(key);
+            System.out.println(key + " x" + value + ": " + centsToEuroString(price*value) + "€");
+            total += price;
         }
-        System.out.println("Total: " + String.format("%.2f", total) + "€");
+        System.out.println("Total: " + centsToEuroString(total) + "€");
+    }
+
+    static String centsToEuroString(int amount) {
+        return String.format("%.2f", amount / 100f);
     }
 }

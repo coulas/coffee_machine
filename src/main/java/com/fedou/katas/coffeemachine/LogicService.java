@@ -12,7 +12,7 @@ public class LogicService {
     public void receives(Command command) {
         DrinkMakerCommand machineCommand = DrinkMakerCommand.buildMachineCommand(command);
         maker.make(machineCommand.handleCommand(command));
-        reporter.report(machineCommand);
+        reporter.record(machineCommand);
     }
 
     public void printReport() {
