@@ -8,6 +8,7 @@ class DrinkMakerCommand {
     final String displayName;
     private final String machineName;
     final int priceInCents;
+    Boolean succeeded = null;
 
     public static DrinkMakerCommand buildMachineCommand(Command command) {
         switch (command.drink) {
@@ -31,8 +32,10 @@ class DrinkMakerCommand {
 
     public String handleCommand(Command command) {
         if (command.amountPaid < priceInCents) {
+            succeeded = false;
             return displayMissingAmount(displayName, priceInCents, command.amountPaid);
         }
+        succeeded = true;
         // return machineName + handleExtraHot() + handleSugar(command);
         return machineName + handleExtraHot(command.extraHot) + handleSugar(command.nbSugar);
     }

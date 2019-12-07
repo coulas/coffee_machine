@@ -16,7 +16,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
@@ -223,11 +222,18 @@ class LogicServiceTest {
 
                 DrinkMakerCommand drinkMakerCommand = DrinkMakerCommand.buildMachineCommand(command);
                 int linePrice = 2 * drinkMakerCommand.priceInCents;
-                reportLine.add(drinkMakerCommand.displayName+" x2: "+ ReportService.centsToEuroString(linePrice));
-                total+=linePrice;
+                reportLine.add(drinkMakerCommand.displayName + " x2: " + ReportService.centsToEuroString(linePrice));
+                total += linePrice;
             }
-            reportLine.add("Total: "+ReportService.centsToEuroString(total));
+            reportLine.add("Total: " + ReportService.centsToEuroString(total));
             verifyReport("several drinks gives:", reportLine.toArray(new String[reportLine.size()]));
+        }
+
+        @Test
+        void should_not_count_command_without_enougth_money() {
+            Command command = new Command(Command.DrinkType.COFFEE, false, 0, 30);
+            logic.receives(command);
+            verifyReport("still at zero when no comand were executed", "Total: 0,00€");
         }
 
         private Command send2CommandsForOneDrinkType(Command.DrinkType drink) {

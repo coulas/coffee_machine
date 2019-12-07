@@ -11,8 +11,10 @@ public class ReportService {
 
 
     public void record(DrinkMakerCommand machineCommand) {
-         records.merge(machineCommand.displayName, 1, (count, increment) -> count + increment);
-         prices.computeIfAbsent(machineCommand.displayName, (key) -> machineCommand.priceInCents);
+        if (Boolean.TRUE.equals(machineCommand.succeeded)) {
+            records.merge(machineCommand.displayName, 1, (count, increment) -> count + increment);
+            prices.computeIfAbsent(machineCommand.displayName, (key) -> machineCommand.priceInCents);
+        } // else no need to record failure
     }
 
     public void printReport() {
