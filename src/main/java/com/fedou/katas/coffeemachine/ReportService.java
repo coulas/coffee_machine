@@ -20,10 +20,11 @@ public class ReportService {
         int total = 0;
         for (Map.Entry<String, Integer> entry : records.entrySet()) {
             String key = entry.getKey();
-            Integer value = entry.getValue();
-            Integer price = prices.get(key);
-            System.out.println(key + " x" + value + ": " + centsToEuroString(price*value) + "€");
-            total += price;
+            Integer drinksServed = entry.getValue();
+            Integer drinkPrice = prices.get(key);
+            int drinksServedInCents = drinkPrice * drinksServed;
+            System.out.println(key + " x" + drinksServed + ": " + centsToEuroString(drinksServedInCents) + "€");
+            total += drinksServedInCents;
         }
         System.out.println("Total: " + centsToEuroString(total) + "€");
     }
