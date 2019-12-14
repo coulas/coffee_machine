@@ -23,10 +23,20 @@ class LogicServiceTest {
 
     @Mock
     DrinkMakerService maker;
+    @Mock
+    EmailNotifier emailNotifier;
+    @Mock
+    BeverageQuantityChecker beverageQuantityChecker;
     @Spy
     ReportService reporter = new ReportService();
+
     @InjectMocks
     LogicService logic;
+
+    @BeforeEach
+    void fillMachine() {
+        Mockito.doReturn(false).when(beverageQuantityChecker).isEmpty(Mockito.anyString());
+    }
 
     @TestFactory
     DynamicTest[] should_make_right_drink() {
@@ -195,6 +205,8 @@ class LogicServiceTest {
 
         @Test
         void should_print_empty_report() {
+            // avoid failure due to unused stubbed mock
+            Mockito.reset(beverageQuantityChecker);
             verifyReport("empty report", "Total: 0,00€");
         }
 
@@ -263,4 +275,45 @@ class LogicServiceTest {
         }
 
     }
+
+    @Nested
+    public class Handle_Shortage {
+
+        @ParameterizedTest
+        @EnumSource(Command.DrinkType.class)
+        void should_email_and_message_user_when_shortage(Command.DrinkType drink) {
+            Command command = new Command(drink, false, 0, 100);
+            DrinkMakerCommand drinkMakerCommand = DrinkMakerCommand.buildMachineCommand(command);
+
+            Mockito.reset(beverageQuantityChecker); // unset shared beforeEach
+            Mockito.doReturn(true).when(beverageQuantityChecker).isEmpty(drinkMakerCommand.displayName);
+
+            logic.receives(command);
+
+            org.junit.jupiter.api.Assertions.assertAll(
+                    () -> Mockito.verify(emailNotifier, Mockito.times(1)).notifyMissingDrink(drinkMakerCommand.displayName),
+                    () -> Mockito.verify(maker).make(Mockito.eq("M:Missing " + drinkMakerCommand.displayName + ", provider notified"))
+            );
+
+        }
+
+        @ParameterizedTest
+        @EnumSource(Command.DrinkType.class)
+        void should_not_email_and_message_user_when_shortage(Command.DrinkType drink) {
+            Command command = new Command(drink, false, 0, 100);
+
+            // Done in beforeEach
+            // Mockito.doReturn(false).when(beverageQuantityChecker).isEmpty(drink.toString());
+
+            logic.receives(command);
+
+            DrinkMakerCommand drinkMakerCommand = DrinkMakerCommand.buildMachineCommand(command);
+            org.junit.jupiter.api.Assertions.assertAll(
+                    () -> Mockito.verify(maker).make(Mockito.matches(".*:.*:.*")),
+                    () -> Mockito.verifyZeroInteractions(emailNotifier)
+            );
+        }
+
+    }
 }
+
